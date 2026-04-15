@@ -106,8 +106,8 @@ button:hover {
 <!-- SOUNDS -->
 <audio id="alarmSound" src="https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg"></audio>
 <audio id="correctSound" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"></audio>
-
-<script>
+<audio id="alarmMusic" loop src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8b6b5f7d0.mp3?filename=morning-alarm-clock-113180.mp3"></audio>
+ <script>
 let words = [
   {w:"sustainable", o:["устойчивый","быстрый","опасный"], c:0},
   {w:"inevitable", o:["неизбежный","возможный","редкий"], c:0},
@@ -182,10 +182,15 @@ setInterval(()=>{
 },1000);
 
 function start(){
-  document.getElementById("quiz").style.display="block";
-  document.getElementById("alarmSound").play();
+  document.getElementById("quiz").style.display = "block";
+
+  const music = document.getElementById("alarmMusic");
+  music.loop = true;
+  music.play();
+
   load();
 }
+
 
 function load(){
   let w = words[i];
@@ -225,12 +230,14 @@ function check(ans){
   }
 }
     function startLearning(){
-  document.getElementById("quiz").style.display = "block";
-  document.getElementById("alarmSound").pause();
-  document.getElementById("alarmSound").currentTime = 0;
 
-  // скрыть кнопку
+  const music = document.getElementById("alarmMusic");
+  music.pause();
+  music.currentTime = 0;
+
   document.querySelector("button[onclick='startLearning()']").style.display = "none";
+
+  document.getElementById("quiz").style.display = "block";
 
   load();
 }
