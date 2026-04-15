@@ -6,33 +6,33 @@
 <title>Smart Learning Alarm</title>
 
 <style>
-body {
-    margin: 0;
-    font-family: Arial;
-    background: linear-gradient(135deg,#667eea,#764ba2);
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    height:100vh;
-    color:white;
+body{
+  margin:0;
+  font-family:Arial;
+  background:linear-gradient(135deg,#667eea,#764ba2);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+  color:white;
 }
 
 .container{
-    background:rgba(255,255,255,0.12);
-    padding:20px;
-    border-radius:20px;
-    width:340px;
-    text-align:center;
-    backdrop-filter:blur(12px);
+  background:rgba(255,255,255,0.12);
+  padding:20px;
+  border-radius:20px;
+  width:340px;
+  text-align:center;
+  backdrop-filter:blur(12px);
 }
 
 button{
-    width:90%;
-    margin:5px;
-    padding:10px;
-    border:none;
-    border-radius:10px;
-    cursor:pointer;
+  width:90%;
+  margin:5px;
+  padding:10px;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
 }
 </style>
 </head>
@@ -41,7 +41,7 @@ button{
 
 <div class="container">
 
-<h2>⏰ Smart Alarm Learning</h2>
+<h2>⏰ Smart Learning Alarm</h2>
 
 <div id="clock"></div>
 
@@ -64,7 +64,10 @@ button{
 </div>
 
 <!-- SOUNDS -->
-<audio id="alarmMusic" loop src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8b6b5f7d0.mp3?filename=morning-alarm-clock-113180.mp3"></audio>
+<audio id="alarmMusic" loop>
+  <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8b6b5f7d0.mp3?filename=morning-alarm-clock-113180.mp3">
+</audio>
+
 <audio id="correctSound" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"></audio>
 
 <script>
@@ -82,26 +85,30 @@ let words = [
 
 let i=0,score=0,level=1,alarm="";
 let alarmTriggered=false;
-let unlocked=false;
+let soundUnlocked=false;
 
-function clock(){
+/* CLOCK */
+setInterval(()=>{
   document.getElementById("clock").innerText=new Date().toLocaleTimeString();
-}
-setInterval(clock,1000);
+},1000);
 
+/* SET ALARM */
 function setAlarm(){
   alarm=document.getElementById("alarmTime").value;
   alert("Alarm set!");
 }
 
-function unlockSound(){
-  let a=document.getElementById("alarmMusic");
-  a.play().then(()=>{a.pause();unlocked=true;});
-}
+/* UNLOCK SOUND (browser requirement) */
+document.addEventListener("click",()=>{
+  const s=document.getElementById("alarmMusic");
+  s.play().then(()=>{
+    s.pause();
+    s.currentTime=0;
+    soundUnlocked=true;
+  });
+},{once:true});
 
-// IMPORTANT: unlock sound first click
-document.addEventListener("click",unlockSound,{once:true});
-
+/* CHECK TIME -> ONLY SOUND */
 setInterval(()=>{
   let now=new Date().toTimeString().slice(0,5);
 
@@ -111,16 +118,21 @@ setInterval(()=>{
   }
 },1000);
 
+/* ALARM ONLY SOUND */
 function startAlarm(){
-  if(unlocked){
-    let m=document.getElementById("alarmMusic");
-    m.play();
-  }
+  if(!soundUnlocked) return;
+
+  const music=document.getElementById("alarmMusic");
+  music.currentTime=0;
+  music.play();
 }
 
+/* START LEARNING -> ONLY QUIZ */
 function startLearning(){
-  document.getElementById("alarmMusic").pause();
-  document.getElementById("alarmMusic").currentTime=0;
+
+  const music=document.getElementById("alarmMusic");
+  music.pause();
+  music.currentTime=0;
 
   document.getElementById("startBtn").style.display="none";
 
@@ -129,32 +141,38 @@ function startLearning(){
   load();
 }
 
+/* LOAD WORDS */
 function load(){
   let w=words[i];
-  document.getElementById("word").innerText=w.w;
 
+  document.getElementById("word").innerText=w.w;
   document.getElementById("a").innerText=w.o[0];
   document.getElementById("b").innerText=w.o[1];
   document.getElementById("c").innerText=w.o[2];
 
-  document.getElementById("score").innerText="Score:"+score;
-  document.getElementById("level").innerText="Level:"+level;
+  document.getElementById("score").innerText="Score: "+score;
+  document.getElementById("level").innerText="Level: "+level;
 }
 
+/* CHECK ANSWER */
 function check(ans){
   if(ans===words[i].c){
     score+=10;
     document.getElementById("correctSound").play();
+
     i++;
 
     if(i%5===0) level++;
 
     if(i>=words.length){
-      alert("Done! Score: "+score);
+      alert("Finished! Score: "+score);
+
       i=0;score=0;level=1;
+
       document.getElementById("quiz").style.display="none";
       document.getElementById("startBtn").style.display="block";
     }
+
     load();
   }else{
     score-=5;
