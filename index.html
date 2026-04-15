@@ -97,8 +97,8 @@ button:hover {
   <button onclick="check(2)" id="c"></button>
 </div>
 
-<button onclick="stopAlarm()">Stop Alarm</button>
 <button onclick="startLearning()">Start Learning</button>
+    
 </div>
 
 </div>
@@ -224,22 +224,15 @@ function check(ans){
     alert("Wrong!");
   }
 }
-    function startAlarm(){
-  document.getElementById("alarmSound").play();
-  document.getElementById("quiz").style.display = "none";
-  alert("⏰ ALARM! Press Start Learning!");
-}
-
-function stopAlarm(){
-  document.getElementById("alarmSound").pause();
-  document.getElementById("alarmSound").currentTime = 0;
-  alarmRinging = false;
-}
-
-function startLearning(){
+    function startLearning(){
   document.getElementById("quiz").style.display = "block";
   document.getElementById("alarmSound").pause();
   document.getElementById("alarmSound").currentTime = 0;
+
+  // скрыть кнопку
+  document.querySelector("button[onclick='startLearning()']").style.display = "none";
+
+  load();
 }
 </script>
 
