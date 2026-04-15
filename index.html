@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Learning Alarm</title>
+
+<style>
+body {
+    font-family: Arial;
+    text-align: center;
+    background: linear-gradient(to right, #4facfe, #00f2fe);
+    color: white;
+}
+
+#clock {
+    font-size: 40px;
+    margin: 20px;
+}
+
+button, input {
+    padding: 10px;
+    margin: 10px;
+}
+</style>
+</head>
+
+<body>
+
+<h1>⏰ Smart Learning Alarm</h1>
+
+<div id="clock"></div>
+
+<input type="time" id="alarmTime">
+<button onclick="setAlarm()">Set Alarm</button>
+
+<div id="quiz" style="display:none;">
+  <h2>Translate:</h2>
+  <p id="word"></p>
+
+  <button onclick="check(0)" id="a"></button>
+  <button onclick="check(1)" id="b"></button>
+  <button onclick="check(2)" id="c"></button>
+</div>
+
+<script>
+let words = [
+  {w:"apple", o:["яблоко","дом","машина"], c:0},
+  {w:"book", o:["ручка","книга","стол"], c:1},
+  {w:"sun", o:["луна","солнце","звезда"], c:1}
+];
+
+let i = 0;
+let alarm = "";
+
+function clock(){
+  document.getElementById("clock").innerText = new Date().toLocaleTimeString();
+}
+setInterval(clock,1000);
+
+function setAlarm(){
+  alarm = document.getElementById("alarmTime").value;
+  alert("Alarm set!");
+}
+
+setInterval(()=>{
+  let now = new Date().toTimeString().slice(0,5);
+  if(now === alarm){
+    start();
+  }
+},1000);
+
+function start(){
+  document.getElementById("quiz").style.display="block";
+  load();
+}
+
+function load(){
+  let w = words[i];
+  document.getElementById("word").innerText = w.w;
+  document.getElementById("a").innerText = w.o[0];
+  document.getElementById("b").innerText = w.o[1];
+  document.getElementById("c").innerText = w.o[2];
+}
+
+function check(ans){
+  if(ans === words[i].c){
+    i++;
+    if(i>=words.length){
+      alert("Done! Alarm off");
+      document.getElementById("quiz").style.display="none";
+      i=0;
+    } else load();
+  } else alert("Wrong!");
+}
+</script>
+
+</body>
+</html>
