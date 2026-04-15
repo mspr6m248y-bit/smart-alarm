@@ -7,25 +7,77 @@
 
 <style>
 body {
-    font-family: Arial;
-    text-align: center;
-    background: linear-gradient(to right, #4facfe, #00f2fe);
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
     color: white;
 }
 
-#clock {
-    font-size: 40px;
-    margin: 20px;
+.container {
+    background: rgba(255,255,255,0.12);
+    padding: 25px;
+    border-radius: 20px;
+    width: 340px;
+    text-align: center;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 10px 35px rgba(0,0,0,0.3);
+    animation: fadeIn 1s ease;
 }
 
-button, input {
+@keyframes fadeIn {
+    from {opacity: 0; transform: scale(0.9);}
+    to {opacity: 1; transform: scale(1);}
+}
+
+h1 {
+    font-size: 22px;
+    margin-bottom: 10px;
+}
+
+#clock {
+    font-size: 28px;
+    margin: 10px 0;
+}
+
+input {
     padding: 10px;
-    margin: 10px;
+    border-radius: 10px;
+    border: none;
+    margin: 10px 0;
+    width: 90%;
+}
+
+button {
+    padding: 10px;
+    width: 90%;
+    margin: 5px 0;
+    border: none;
+    border-radius: 12px;
+    background: #00f2fe;
+    color: black;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+button:hover {
+    transform: scale(1.05);
+    background: #4facfe;
+}
+
+#quiz button {
+    display: block;
 }
 </style>
 </head>
 
 <body>
+
+<div class="container">
 
 <h1>⏰ Smart Learning Alarm</h1>
 
@@ -34,23 +86,76 @@ button, input {
 <input type="time" id="alarmTime">
 <button onclick="setAlarm()">Set Alarm</button>
 
+<h3 id="score">Score: 0</h3>
+<h3 id="level">Level: 1</h3>
+
 <div id="quiz" style="display:none;">
-  <h2>Translate:</h2>
-  <p id="word"></p>
+  <h2 id="word"></h2>
 
   <button onclick="check(0)" id="a"></button>
   <button onclick="check(1)" id="b"></button>
   <button onclick="check(2)" id="c"></button>
 </div>
 
+</div>
+
+<!-- SOUNDS -->
+<audio id="alarmSound" src="https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg"></audio>
+<audio id="correctSound" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"></audio>
+
 <script>
 let words = [
-  {w:"apple", o:["яблоко","дом","машина"], c:0},
-  {w:"book", o:["ручка","книга","стол"], c:1},
-  {w:"sun", o:["луна","солнце","звезда"], c:1}
+  {w:"sustainable", o:["устойчивый","быстрый","опасный"], c:0},
+  {w:"inevitable", o:["неизбежный","возможный","редкий"], c:0},
+  {w:"consequence", o:["следствие","причина","решение"], c:0},
+  {w:"efficient", o:["эффективный","сложный","случайный"], c:0},
+  {w:"challenge", o:["вызов","ответ","ошибка"], c:0},
+  {w:"achievement", o:["достижение","поражение","попытка"], c:0},
+  {w:"environment", o:["окружающая среда","технология","общество"], c:0},
+  {w:"improve", o:["улучшать","ломать","забывать"], c:0},
+  {w:"opportunity", o:["возможность","опасность","запрет"], c:0},
+  {w:"responsibility", o:["ответственность","свобода","право"], c:0},
+
+  {w:"communication", o:["общение","конфликт","тишина"], c:0},
+  {w:"development", o:["развитие","остановка","разрушение"], c:0},
+  {w:"knowledge", o:["знание","сомнение","случай"], c:0},
+  {w:"experience", o:["опыт","ошибка","игра"], c:0},
+  {w:"education", o:["образование","развлечение","хаос"], c:0},
+
+  {w:"motivation", o:["мотивация","лень","страх"], c:0},
+  {w:"innovation", o:["инновация","копирование","старость"], c:0},
+  {w:"technology", o:["технология","природа","вода"], c:0},
+  {w:"solution", o:["решение","проблема","вопрос"], c:0},
+  {w:"research", o:["исследование","игра","сон"], c:0},
+
+  {w:"analysis", o:["анализ","хаос","шум"], c:0},
+  {w:"strategy", o:["стратегия","случай","ошибка"], c:0},
+  {w:"decision", o:["решение","сомнение","страх"], c:0},
+  {w:"progress", o:["прогресс","назад","стоп"], c:0},
+  {w:"focus", o:["фокус","разброс","шум"], c:0},
+
+  {w:"success", o:["успех","провал","ошибка"], c:0},
+  {w:"failure", o:["провал","успех","победа"], c:0},
+  {w:"creativity", o:["креативность","копирование","шаблон"], c:0},
+  {w:"confidence", o:["уверенность","страх","сомнение"], c:0},
+  {w:"discipline", o:["дисциплина","хаос","лень"], c:0},
+
+  {w:"consistency", o:["постоянство","случайность","ошибка"], c:0},
+  {w:"flexibility", o:["гибкость","жёсткость","слабость"], c:0},
+  {w:"awareness", o:["осознанность","сон","забывчивость"], c:0},
+  {w:"effort", o:["усилие","отдых","покой"], c:0},
+  {w:"goal", o:["цель","ошибка","случай"], c:0},
+
+  {w:"habit", o:["привычка","идея","страх"], c:0},
+  {w:"memory", o:["память","забывание","шум"], c:0},
+  {w:"logic", o:["логика","хаос","эмоция"], c:0},
+  {w:"emotion", o:["эмоция","логика","число"], c:0},
+  {w:"attention", o:["внимание","рассеянность","сон"], c:0}
 ];
 
 let i = 0;
+let score = 0;
+let level = 1;
 let alarm = "";
 
 function clock(){
@@ -72,26 +177,46 @@ setInterval(()=>{
 
 function start(){
   document.getElementById("quiz").style.display="block";
+  document.getElementById("alarmSound").play();
   load();
 }
 
 function load(){
   let w = words[i];
   document.getElementById("word").innerText = w.w;
+
   document.getElementById("a").innerText = w.o[0];
   document.getElementById("b").innerText = w.o[1];
   document.getElementById("c").innerText = w.o[2];
+
+  document.getElementById("score").innerText = "Score: " + score;
+  document.getElementById("level").innerText = "Level: " + level;
 }
 
 function check(ans){
   if(ans === words[i].c){
+    score += 10;
+    document.getElementById("correctSound").play();
+
     i++;
-    if(i>=words.length){
-      alert("Done! Alarm off");
+
+    if(i % 10 === 0){
+      level++;
+    }
+
+    if(i >= words.length){
+      alert("Finished! Final Score: " + score);
+      i = 0;
+      score = 0;
+      level = 1;
       document.getElementById("quiz").style.display="none";
-      i=0;
-    } else load();
-  } else alert("Wrong!");
+    } else {
+      load();
+    }
+  } else {
+    score -= 5;
+    alert("Wrong!");
+  }
 }
 </script>
 
