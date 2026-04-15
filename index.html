@@ -8,69 +8,31 @@
 <style>
 body {
     margin: 0;
-    font-family: Arial, sans-serif;
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    color: white;
+    font-family: Arial;
+    background: linear-gradient(135deg,#667eea,#764ba2);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+    color:white;
 }
 
-.container {
-    background: rgba(255,255,255,0.12);
-    padding: 25px;
-    border-radius: 20px;
-    width: 340px;
-    text-align: center;
-    backdrop-filter: blur(12px);
-    box-shadow: 0 10px 35px rgba(0,0,0,0.3);
-    animation: fadeIn 1s ease;
+.container{
+    background:rgba(255,255,255,0.12);
+    padding:20px;
+    border-radius:20px;
+    width:340px;
+    text-align:center;
+    backdrop-filter:blur(12px);
 }
 
-@keyframes fadeIn {
-    from {opacity: 0; transform: scale(0.9);}
-    to {opacity: 1; transform: scale(1);}
-}
-
-h1 {
-    font-size: 22px;
-    margin-bottom: 10px;
-}
-
-#clock {
-    font-size: 28px;
-    margin: 10px 0;
-}
-
-input {
-    padding: 10px;
-    border-radius: 10px;
-    border: none;
-    margin: 10px 0;
-    width: 90%;
-}
-
-button {
-    padding: 10px;
-    width: 90%;
-    margin: 5px 0;
-    border: none;
-    border-radius: 12px;
-    background: #00f2fe;
-    color: black;
-    font-weight: bold;
-    cursor: pointer;
-    transition: 0.2s;
-}
-
-button:hover {
-    transform: scale(1.05);
-    background: #4facfe;
-}
-
-#quiz button {
-    display: block;
+button{
+    width:90%;
+    margin:5px;
+    padding:10px;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
 }
 </style>
 </head>
@@ -79,7 +41,7 @@ button:hover {
 
 <div class="container">
 
-<h1>⏰ Smart Learning Alarm</h1>
+<h2>⏰ Smart Alarm Learning</h2>
 
 <div id="clock"></div>
 
@@ -89,6 +51,8 @@ button:hover {
 <h3 id="score">Score: 0</h3>
 <h3 id="level">Level: 1</h3>
 
+<button onclick="startLearning()" id="startBtn">Start Learning</button>
+
 <div id="quiz" style="display:none;">
   <h2 id="word"></h2>
 
@@ -97,150 +61,107 @@ button:hover {
   <button onclick="check(2)" id="c"></button>
 </div>
 
-<button onclick="startLearning()">Start Learning</button>
-    
-</div>
-
 </div>
 
 <!-- SOUNDS -->
-<audio id="alarmSound" src="https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg"></audio>
-<audio id="correctSound" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"></audio>
 <audio id="alarmMusic" loop src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8b6b5f7d0.mp3?filename=morning-alarm-clock-113180.mp3"></audio>
- <script>
+<audio id="correctSound" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"></audio>
+
+<script>
+
 let words = [
-  {w:"sustainable", o:["устойчивый","быстрый","опасный"], c:0},
-  {w:"inevitable", o:["неизбежный","возможный","редкий"], c:0},
-  {w:"consequence", o:["следствие","причина","решение"], c:0},
-  {w:"efficient", o:["эффективный","сложный","случайный"], c:0},
-  {w:"challenge", o:["вызов","ответ","ошибка"], c:0},
-  {w:"achievement", o:["достижение","поражение","попытка"], c:0},
-  {w:"environment", o:["окружающая среда","технология","общество"], c:0},
-  {w:"improve", o:["улучшать","ломать","забывать"], c:0},
-  {w:"opportunity", o:["возможность","опасность","запрет"], c:0},
-  {w:"responsibility", o:["ответственность","свобода","право"], c:0},
-
-  {w:"communication", o:["общение","конфликт","тишина"], c:0},
-  {w:"development", o:["развитие","остановка","разрушение"], c:0},
-  {w:"knowledge", o:["знание","сомнение","случай"], c:0},
-  {w:"experience", o:["опыт","ошибка","игра"], c:0},
-  {w:"education", o:["образование","развлечение","хаос"], c:0},
-
-  {w:"motivation", o:["мотивация","лень","страх"], c:0},
-  {w:"innovation", o:["инновация","копирование","старость"], c:0},
-  {w:"technology", o:["технология","природа","вода"], c:0},
-  {w:"solution", o:["решение","проблема","вопрос"], c:0},
-  {w:"research", o:["исследование","игра","сон"], c:0},
-
-  {w:"analysis", o:["анализ","хаос","шум"], c:0},
-  {w:"strategy", o:["стратегия","случай","ошибка"], c:0},
-  {w:"decision", o:["решение","сомнение","страх"], c:0},
-  {w:"progress", o:["прогресс","назад","стоп"], c:0},
-  {w:"focus", o:["фокус","разброс","шум"], c:0},
-
-  {w:"success", o:["успех","провал","ошибка"], c:0},
-  {w:"failure", o:["провал","успех","победа"], c:0},
-  {w:"creativity", o:["креативность","копирование","шаблон"], c:0},
-  {w:"confidence", o:["уверенность","страх","сомнение"], c:0},
-  {w:"discipline", o:["дисциплина","хаос","лень"], c:0},
-
-  {w:"consistency", o:["постоянство","случайность","ошибка"], c:0},
-  {w:"flexibility", o:["гибкость","жёсткость","слабость"], c:0},
-  {w:"awareness", o:["осознанность","сон","забывчивость"], c:0},
-  {w:"effort", o:["усилие","отдых","покой"], c:0},
-  {w:"goal", o:["цель","ошибка","случай"], c:0},
-
-  {w:"habit", o:["привычка","идея","страх"], c:0},
-  {w:"memory", o:["память","забывание","шум"], c:0},
-  {w:"logic", o:["логика","хаос","эмоция"], c:0},
-  {w:"emotion", o:["эмоция","логика","число"], c:0},
-  {w:"attention", o:["внимание","рассеянность","сон"], c:0}
+  {w:"sustainable",o:["устойчивый","быстрый","опасный"],c:0},
+  {w:"inevitable",o:["неизбежный","возможный","редкий"],c:0},
+  {w:"challenge",o:["вызов","ответ","ошибка"],c:0},
+  {w:"knowledge",o:["знание","игра","шум"],c:0},
+  {w:"strategy",o:["стратегия","хаос","случай"],c:0},
+  {w:"focus",o:["фокус","разброс","сон"],c:0},
+  {w:"success",o:["успех","провал","ошибка"],c:0},
+  {w:"discipline",o:["дисциплина","лень","страх"],c:0}
 ];
 
-let i = 0;
-let score = 0;
-let level = 1;
-let alarm = "";
-let alarmRinging = false;
-    
+let i=0,score=0,level=1,alarm="";
+let alarmTriggered=false;
+let unlocked=false;
+
 function clock(){
-  document.getElementById("clock").innerText = new Date().toLocaleTimeString();
+  document.getElementById("clock").innerText=new Date().toLocaleTimeString();
 }
 setInterval(clock,1000);
 
 function setAlarm(){
-  alarm = document.getElementById("alarmTime").value;
+  alarm=document.getElementById("alarmTime").value;
   alert("Alarm set!");
 }
 
-setInterval(()=>{
-  let now = new Date().toTimeString().slice(0,5);
-  if(now === alarm && !alarmRinging){
-  alarmRinging = true;
-  start();
+function unlockSound(){
+  let a=document.getElementById("alarmMusic");
+  a.play().then(()=>{a.pause();unlocked=true;});
 }
+
+// IMPORTANT: unlock sound first click
+document.addEventListener("click",unlockSound,{once:true});
+
+setInterval(()=>{
+  let now=new Date().toTimeString().slice(0,5);
+
+  if(now===alarm && !alarmTriggered){
+    alarmTriggered=true;
+    startAlarm();
+  }
 },1000);
 
-function start(){
-  document.getElementById("quiz").style.display = "block";
+function startAlarm(){
+  if(unlocked){
+    let m=document.getElementById("alarmMusic");
+    m.play();
+  }
+}
 
-  const music = document.getElementById("alarmMusic");
-  music.loop = true;
-  music.play();
+function startLearning(){
+  document.getElementById("alarmMusic").pause();
+  document.getElementById("alarmMusic").currentTime=0;
+
+  document.getElementById("startBtn").style.display="none";
+
+  document.getElementById("quiz").style.display="block";
 
   load();
 }
 
-
 function load(){
-  let w = words[i];
-  document.getElementById("word").innerText = w.w;
+  let w=words[i];
+  document.getElementById("word").innerText=w.w;
 
-  document.getElementById("a").innerText = w.o[0];
-  document.getElementById("b").innerText = w.o[1];
-  document.getElementById("c").innerText = w.o[2];
+  document.getElementById("a").innerText=w.o[0];
+  document.getElementById("b").innerText=w.o[1];
+  document.getElementById("c").innerText=w.o[2];
 
-  document.getElementById("score").innerText = "Score: " + score;
-  document.getElementById("level").innerText = "Level: " + level;
+  document.getElementById("score").innerText="Score:"+score;
+  document.getElementById("level").innerText="Level:"+level;
 }
 
 function check(ans){
-  if(ans === words[i].c){
-    score += 10;
+  if(ans===words[i].c){
+    score+=10;
     document.getElementById("correctSound").play();
-
     i++;
 
-    if(i % 10 === 0){
-      level++;
-    }
+    if(i%5===0) level++;
 
-    if(i >= words.length){
-      alert("Finished! Final Score: " + score);
-      i = 0;
-      score = 0;
-      level = 1;
+    if(i>=words.length){
+      alert("Done! Score: "+score);
+      i=0;score=0;level=1;
       document.getElementById("quiz").style.display="none";
-    } else {
-      load();
+      document.getElementById("startBtn").style.display="block";
     }
-  } else {
-    score -= 5;
+    load();
+  }else{
+    score-=5;
     alert("Wrong!");
   }
 }
-    function startLearning(){
 
-  const music = document.getElementById("alarmMusic");
-  music.pause();
-  music.currentTime = 0;
-
-  document.querySelector("button[onclick='startLearning()']").style.display = "none";
-
-  document.getElementById("quiz").style.display = "block";
-
-  load();
-}
 </script>
 
 </body>
