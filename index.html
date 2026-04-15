@@ -177,7 +177,7 @@ setInterval(()=>{
   let now = new Date().toTimeString().slice(0,5);
   if(now === alarm && !alarmRinging){
   alarmRinging = true;
-  startAlarm();
+  start();
 }
 },1000);
 
