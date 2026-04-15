@@ -97,6 +97,10 @@ button:hover {
   <button onclick="check(2)" id="c"></button>
 </div>
 
+<button onclick="stopAlarm()">Stop Alarm</button>
+<button onclick="startLearning()">Start Learning</button>
+</div>
+
 </div>
 
 <!-- SOUNDS -->
@@ -157,7 +161,8 @@ let i = 0;
 let score = 0;
 let level = 1;
 let alarm = "";
-
+let alarmRinging = false;
+    
 function clock(){
   document.getElementById("clock").innerText = new Date().toLocaleTimeString();
 }
@@ -170,9 +175,10 @@ function setAlarm(){
 
 setInterval(()=>{
   let now = new Date().toTimeString().slice(0,5);
-  if(now === alarm){
-    start();
-  }
+  if(now === alarm && !alarmRinging){
+  alarmRinging = true;
+  startAlarm();
+}
 },1000);
 
 function start(){
@@ -217,6 +223,23 @@ function check(ans){
     score -= 5;
     alert("Wrong!");
   }
+}
+    function startAlarm(){
+  document.getElementById("alarmSound").play();
+  document.getElementById("quiz").style.display = "none";
+  alert("⏰ ALARM! Press Start Learning!");
+}
+
+function stopAlarm(){
+  document.getElementById("alarmSound").pause();
+  document.getElementById("alarmSound").currentTime = 0;
+  alarmRinging = false;
+}
+
+function startLearning(){
+  document.getElementById("quiz").style.display = "block";
+  document.getElementById("alarmSound").pause();
+  document.getElementById("alarmSound").currentTime = 0;
 }
 </script>
 
